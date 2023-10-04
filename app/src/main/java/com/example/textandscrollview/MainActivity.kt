@@ -11,9 +11,12 @@ import android.telephony.TelephonyCallback
 import android.telephony.TelephonyCallback.UserMobileDataStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import java.util.concurrent.Executors
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,24 +26,25 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
 
     val tag = "NEW_TAG"
-    val exec = Executors.newSingleThreadExecutor()
 
     val telephonyManager =
         application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
-    Log.d(tag, Build.VERSION.SDK_INT.toString())
-
     if (Build.VERSION.SDK_INT >= 31) {
 
-      val callback =
-          object : TelephonyCallback(), UserMobileDataStateListener {
+      GlobalScope.launch {
+        val exec = Executors.newCachedThreadPool()
 
-            override fun onUserMobileDataStateChanged(enabled: Boolean) {
-              Log.d(tag, enabled.toString())
+        val callback =
+            object : TelephonyCallback(), UserMobileDataStateListener {
+
+              override fun onUserMobileDataStateChanged(enabled: Boolean) {
+                Log.d(tag, "MData: ${enabled.toString()}")
+              }
             }
-          }
 
-      telephonyManager.registerTelephonyCallback(exec, callback)
+        telephonyManager.registerTelephonyCallback(exec, callback)
+      }
     } else {
       Log.d(tag, "State: UNDER SDK 30")
 
@@ -48,7 +52,8 @@ class MainActivity : AppCompatActivity() {
           object : ContentObserver(Handler()) {
             override fun onChange(selfChange: Boolean, uri: Uri?) {
               // Retrieve mobile data value here and perform necessary actions
-              Log.d(tag, "State: ${selfChange.toString()} | URI: $uri")
+              Log.d(tag, "MData: $selfChange")
+              Toast.makeText(applicationContext, "MData: $selfChange", Toast.LENGTH_LONG).show()
             }
           }
 
