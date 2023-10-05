@@ -1,4 +1,4 @@
-package com.example.textandscrollview
+package com.example.mobiledata
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver

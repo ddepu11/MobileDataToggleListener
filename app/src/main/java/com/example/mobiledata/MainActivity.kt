@@ -1,4 +1,4 @@
-package com.example.textandscrollview
+package com.example.mobiledata
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,6 +13,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.textandscrollview.R
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     title = "KotlinApp"
     wifiSwitch = findViewById(R.id.wifiSwitch)
     wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
     wifiSwitch.setOnCheckedChangeListener { _, isChecked ->
       if (isChecked) {
         wifiManager.isWifiEnabled = true
@@ -60,14 +62,12 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             WifiManager.WIFI_STATE_ENABLED -> {
               wifiSwitch.isChecked = true
               wifiSwitch.text = "WiFi is ON"
-              // Toast.makeText(this@MainActivity, "Wifi is On",
-              // Toast.LENGTH_SHORT).show()
+              Toast.makeText(this@MainActivity, "Wifi is On", Toast.LENGTH_SHORT).show()
             }
             WifiManager.WIFI_STATE_DISABLED -> {
               wifiSwitch.isChecked = false
               wifiSwitch.text = "WiFi is OFF"
-              // Toast.makeText(this@MainActivity, "Wifi is Off",
-              // Toast.LENGTH_SHORT).show()
+              Toast.makeText(this@MainActivity, "Wifi is Off", Toast.LENGTH_SHORT).show()
             }
           }
         }
