@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.textandscrollview"
+    namespace = "com.example.mobiledata"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.textandscrollview"
+        applicationId = "com.example.mobiledata"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
