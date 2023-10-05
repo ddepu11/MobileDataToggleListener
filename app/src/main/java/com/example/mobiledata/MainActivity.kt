@@ -13,6 +13,7 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.GlobalScope
 import java.util.concurrent.Executors
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.awaitClose
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    MainScope().launch {
+    GlobalScope.launch {
       getMobileDataToggleUpdatesFlow()
           .onCompletion { Log.d(tag, "OnCompletion: $it") }
           .catch { Log.d(tag, "OnCompletion: $it") }
@@ -40,8 +41,8 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  private fun getMobileDataToggleUpdatesFlow(): Flow<Any> {
-    return callbackFlow<Any> {
+  private fun getMobileDataToggleUpdatesFlow(): Flow<Boolean> {
+    return callbackFlow<Boolean> {
       val telephonyManager =
           application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
       val exec = Executors.newSingleThreadExecutor()
