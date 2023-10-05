@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -30,15 +31,11 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    //   #######################_________@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //   Try with Kotlin flow
-
     MainScope().launch {
       getMobileDataToggleUpdatesFlow()
           .onCompletion { Log.d(tag, "OnCompletion: $it") }
-          .catch {
-              Log.d(tag, "OnCompletion: $it")
-          }
+          .catch { Log.d(tag, "OnCompletion: $it") }
+          .onEmpty { Log.d(tag, "OnEmpty:") }
           .collect { Log.d(tag, "MDATA: $it") }
     }
   }
@@ -47,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     return callbackFlow<Any> {
       val telephonyManager =
           application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-      val exec = Executors.newCachedThreadPool()
+      val exec = Executors.newSingleThreadExecutor()
 
       if (Build.VERSION.SDK_INT >= 31) {
 
@@ -62,9 +59,10 @@ class MainActivity : AppCompatActivity() {
         telephonyManager.registerTelephonyCallback(exec, callback)
 
         awaitClose {
+          Log.d(tag, "CLOSE!!!")
+
           telephonyManager.unregisterTelephonyCallback(callback)
           exec.shutdown()
-          Log.d(tag, "CLOSE!!!")
         }
       } else {
         Log.d(tag, "State: UNDER SDK 30")
@@ -83,6 +81,8 @@ class MainActivity : AppCompatActivity() {
             .registerContentObserver(mobileDataSettingUri, true, mObserver)
 
         awaitClose {
+          Log.d(tag, "CLOSE!!!")
+
           getContentResolver().unregisterContentObserver(mObserver)
           exec.shutdown()
         }
