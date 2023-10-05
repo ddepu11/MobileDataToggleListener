@@ -1,4 +1,4 @@
-package com.example.textandscrollview
+package com.example.mobiledata
 
 import android.content.Context
 import android.database.ContentObserver
