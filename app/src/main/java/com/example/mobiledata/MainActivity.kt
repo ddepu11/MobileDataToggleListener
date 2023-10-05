@@ -13,34 +13,38 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.DelicateCoroutinesApi
 import java.util.concurrent.Executors
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+  private val tag = "NEW_TAG"
 
-  @OptIn(DelicateCoroutinesApi::class)
   @RequiresApi(Build.VERSION_CODES.R)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    val tag = "NEW_TAG"
-
     //   #######################_________@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //   Try with Kotlin flow
 
-    GlobalScope.launch { getMobileDataToggleUpdatesFlow().collect { Log.d(tag, "MDATA: $it") } }
+    MainScope().launch {
+      getMobileDataToggleUpdatesFlow()
+          .onCompletion { Log.d(tag, "OnCompletion: $it") }
+          .catch {
+              Log.d(tag, "OnCompletion: $it")
+          }
+          .collect { Log.d(tag, "MDATA: $it") }
+    }
   }
 
   private fun getMobileDataToggleUpdatesFlow(): Flow<Any> {
     return callbackFlow<Any> {
-      val tag = "NEW_TAG"
-
       val telephonyManager =
           application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
       val exec = Executors.newCachedThreadPool()
