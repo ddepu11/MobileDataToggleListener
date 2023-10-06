@@ -13,6 +13,7 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var mObserver: ContentObserver
   private lateinit var telephonyManager: TelephonyManager
 
-  val exec = Executors.newSingleThreadExecutor()
+  private lateinit var exec: ExecutorService
 
   @RequiresApi(Build.VERSION_CODES.R)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,13 +51,27 @@ class MainActivity : AppCompatActivity() {
           .onCompletion { Log.d(tag, "OnCompletion: $it") }
           .catch { Log.d(tag, "OnCompletion: $it") }
           .onEmpty { Log.d(tag, "OnEmpty:") }
-          .collect { Log.d(tag, "Mobile_Data_On: $it") }
+          .collect { Log.d(tag, "Mobile_Data: ${if(it)"On" else "off"}") }
     }
+  }
+
+  override fun onPause() {
+    super.onPause()
+    Log.d(tag, "!!!!_PAUSE_!!!!:")
+
+    if (Build.VERSION.SDK_INT >= 31) {
+      telephonyManager.unregisterTelephonyCallback(callback)
+    } else {
+      getContentResolver().unregisterContentObserver(mObserver)
+    }
+
+    exec.shutdown()
   }
 
   private fun getMobileDataToggleUpdatesFlow(): Flow<Boolean> {
     return callbackFlow<Boolean> {
       telephonyManager = application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+      exec = Executors.newSingleThreadExecutor()
 
       if (Build.VERSION.SDK_INT >= 31) {
 
