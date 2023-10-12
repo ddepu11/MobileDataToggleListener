@@ -1,6 +1,7 @@
 package com.example.mobiledata
 
 import android.content.Context
+import android.content.Intent
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
@@ -11,6 +12,7 @@ import android.telephony.TelephonyCallback
 import android.telephony.TelephonyCallback.UserMobileDataStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import java.util.concurrent.ExecutorService
@@ -39,6 +41,13 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
+    val testActivityBtn = findViewById<Button>(R.id.testActivityBtn)
+
+    testActivityBtn.setOnClickListener {
+      intent = Intent(applicationContext, TestActivity::class.java)
+      startActivity(intent)
+    }
   }
 
   @OptIn(DelicateCoroutinesApi::class)
@@ -72,6 +81,8 @@ class MainActivity : AppCompatActivity() {
     return callbackFlow<Boolean> {
       telephonyManager = application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
       exec = Executors.newSingleThreadExecutor()
+
+
 
       if (Build.VERSION.SDK_INT >= 31) {
 

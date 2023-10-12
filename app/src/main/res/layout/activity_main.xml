@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
     tools:context=".MainActivity">
 
 
@@ -13,18 +14,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="25dp"
         android:layout_marginTop="20dp"
-        android:text="Sim Data" />
+        android:text="Toggle Sim Data"
+        android:textSize="25dp" />
 
-    <Switch
-        android:id="@+id/wifiSwitch"
+
+    <Button
+        android:id="@+id/testActivityBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginTop="100dp"
-        android:text="Wifi Switch"
-        />
+        android:text="Go To Test Activity"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="143dp"
+        tools:layout_editor_absoluteY="246dp" />
 
 
 </LinearLayout>
